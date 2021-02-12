@@ -1,0 +1,32 @@
+variables:
+    BUILD_USER: "nobody"
+    FULLNAME: "Gitlab CI"
+    EMAIL: "gitlabci@localhost"
+
+stages:
+    - lint
+    - build
+
+image: alpine:3.12
+
+lint:scripts:
+    stage: lint
+    tags:
+        - docker
+    before_script:
+        - apk update && apk add shellcheck
+    script:
+        - shellcheck build.sh
+
+build:ffmpeg:
+    stage: build
+    tags:
+        - docker
+    script:
+        - ./build.sh
+    artifacts:
+        expire_in: 1 week
+        when: always
+        paths:
+            - dist/ffprobe
+            - dist/ffmpeg
